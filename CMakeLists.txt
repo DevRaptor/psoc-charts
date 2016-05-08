@@ -5,7 +5,7 @@
 # Author: Krzysztof Taperek <krzysztof.taperek@gmail.com>
 
 cmake_minimum_required (VERSION 3.0)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR})
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 ##########################################
 ## Project info
@@ -41,20 +41,22 @@ if( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
     # using clang
 	add_definitions( -Wall  -Wextra )
 	add_definitions( -std=c++14 )
-	add_definitions( -O2 )
 	
 	if( DEBUG_MODE )
 		add_definitions( -g )
+	else( DEBUG_MODE)
+		add_definitions( -O2 )
 	endif( DEBUG_MODE )
 	
 elseif( CMAKE_CXX_COMPILER_ID MATCHES "GNU" )
     # using gcc
 	add_definitions( -Wall  -Wextra )
 	add_definitions( -std=c++14 )
-	add_definitions( -O2 )
 	
 	if( DEBUG_MODE )
 		add_definitions( -g )
+	else( DEBUG_MODE)
+		add_definitions( -O2 )
 	endif( DEBUG_MODE )
 	
 elseif( CMAKE_CXX_COMPILER_ID MATCHES "MSVC" )
