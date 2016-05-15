@@ -75,5 +75,33 @@ if( LIBUSB_FOUND )
   set( LIBRARIES ${LIBRARIES} ${LIBUSB_LIBRARY} )
 endif( LIBUSB_FOUND )
 
+###########################################
 add_executable(${TARGET_NAME} ${TARGET_SRC} ${TARGET_HEADERS} )
 target_link_libraries(${TARGET_NAME} ${LIBRARIES})
+###########################################
+
+
+# Find wxWidgets
+SET(wxWidgets_USE_STATIC ON)
+SET(wxWidgets_WXCONFIG_OPTS "--static=yes")
+
+
+   FIND_PACKAGE(wxWidgets COMPONENTS base core gl net)
+   IF(wxWidgets_FOUND)
+     INCLUDE(${wxWidgets_USE_FILE})
+     # and for each of your dependant executable/library targets:
+     TARGET_LINK_LIBRARIES(${TARGET_NAME} ${wxWidgets_LIBRARIES})
+   ENDIF(wxWidgets_FOUND)
+
+
+#find_package(wxWidgets REQUIRED net gl core base)
+#find_package(wxWidgets REQUIRED core base)
+#include(${wxWidgets_USE_FILE})
+
+#if( WXWIDGETS_FOUND )
+
+#  include_directories( ${WXWIDGETS_INCLUDE_DIR} )
+#  set( LIBRARIES ${LIBRARIES} ${WXWIDGETS_LIBRARY} )
+#endif( WXWIDGETS_FOUND )
+
+
