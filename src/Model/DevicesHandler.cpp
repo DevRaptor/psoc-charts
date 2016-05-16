@@ -5,11 +5,17 @@
 * http://www.opensource.org/licenses/mit-license.php
 */
 
-#include "Application.hpp"
+
+#include <iostream>
+
+#include "libusb.h"
+
+#include "../Log.hpp"
+#include "DevicesHandler.hpp"
 
 std::ostream* target;
 
-void Application::InitLibUSB()
+void DevicesHandler::InitLibUSB()
 {
 	int libcode = libusb_init(NULL);
 
@@ -17,12 +23,12 @@ void Application::InitLibUSB()
 		return;
 }
 
-void Application::CloseLibUSB()
+void DevicesHandler::CloseLibUSB()
 {
 	libusb_exit(NULL);
 }
 
-Application::Application()
+DevicesHandler::DevicesHandler()
 {
 	InitLibUSB();
 
@@ -30,12 +36,12 @@ Application::Application()
 	Log("Init log!\n");
 }
 
-Application::~Application()
+DevicesHandler::~DevicesHandler()
 {
 	CloseLibUSB();
 }
 
-void Application::PrintDevicesList()
+void DevicesHandler::PrintDevicesList()
 {
 	libusb_device** devices;
 
@@ -96,7 +102,6 @@ void Application::PrintDevicesList()
 			if (libusb_get_string_descriptor_ascii(handle, string_index[k], (unsigned char*)buffer, 128) >= 0)
 			{
 				Log("-", static_cast<int>(string_index[k]), ": ", buffer, "\n");
-				//printf("   String (0x%02X): \"%s\"\n", string_index[k], buffer);
 			}
 		}
 

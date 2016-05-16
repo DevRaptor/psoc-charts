@@ -4,16 +4,18 @@
 * Licensed under the MIT license:
 * http://www.opensource.org/licenses/mit-license.php
 */
-#include "wx/wx.h"
 
-#include "Application.hpp"
+#include "GUI/MainFrame.hpp"
 
-int main(void)
+class Application: public wxApp
 {
-	Application app;
+	public:
+		virtual bool OnInit()
+		{
+			MainFrame* frame = new MainFrame("psoc-charts", wxPoint(50, 50), wxSize(500, 500));
+			frame->Show(true);
+			return true;
+		}
+};
 
-	app.PrintDevicesList();
-
-	return 0;
-}
-
+wxIMPLEMENT_APP(Application);

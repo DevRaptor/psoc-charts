@@ -7,17 +7,11 @@
 
 #pragma once
 
-#include <iostream>
-
-#include "libusb.h"
-
-#include "Log.hpp"
-
-class Application
+class DevicesHandler
 {
 	public:
-		Application();
-		~Application();
+		DevicesHandler();
+		~DevicesHandler();
 
 		void PrintDevicesList();
 
