@@ -13,7 +13,6 @@
 #include "../Log.hpp"
 #include "DevicesHandler.hpp"
 
-std::ostream* target;
 
 void DevicesHandler::InitLibUSB()
 {
@@ -93,7 +92,7 @@ void DevicesHandler::PrintDevicesList()
 			continue;
 		}
 
-		printf("\nReading buffer descriptors:\n");
+		Log("\nReading buffer descriptors:\n");
 		for (int k = 0; k < 3; k++)
 		{
 			if (string_index[k] == 0)

@@ -5,7 +5,13 @@
 * http://www.opensource.org/licenses/mit-license.php
 */
 
+#include <wx/stdstream.h>
+#include <wx/sizer.h>
+
+#include "../Log.hpp"
 #include "MainFrame.hpp"
+
+std::ostream* target;
 
 
 MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
@@ -40,6 +46,26 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	item_devlist->GetId());
 	menu_file->Bind(wxEVT_COMMAND_MENU_SELECTED, [&](auto) {this->OnExit();}, item_exit->GetId());
 	menu_help->Bind(wxEVT_COMMAND_MENU_SELECTED, [&](auto) {this->OnAbout();}, item_help->GetId());
+
+	///////////////////////////////////////////
+
+	wxBoxSizer* sizer;
+	sizer = new wxBoxSizer(wxVERTICAL);
+
+	logger = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY);
+	sizer->Add(logger, 1, wxALL|wxEXPAND, 5);
+
+	SetSizer(sizer);
+	Layout();
+
+
+	redirect = new wxStreamToTextRedirector(logger, target);
+	Log("Redirect log to wxTextCtrl\n");
+}
+
+MainFrame::~MainFrame()
+{
+	delete redirect;
 }
 
 

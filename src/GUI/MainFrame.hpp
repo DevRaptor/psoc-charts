@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "wx/wx.h"
+#include <wx/wx.h>
 
 #include "../Model/DevicesHandler.hpp"
 
@@ -16,8 +16,13 @@ class MainFrame: public wxFrame
 {
 	public:
 		MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
+		~MainFrame();
 	private:
 		DevicesHandler devhandler;
+
+		wxTextCtrl* logger;
+
+		wxStreamToTextRedirector* redirect;
 
 		void OnExit();
 		void OnAbout();
