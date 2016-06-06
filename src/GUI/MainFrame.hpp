@@ -7,9 +7,50 @@
 
 #pragma once
 
+#include <memory>
 #include <wx/wx.h>
+#include <wx/aui/framemanager.h>
 
 #include "../Model/DevicesHandler.hpp"
+
+
+class LogPanel : public wxPanel
+{
+	public:
+		LogPanel(wxWindow* parent);
+
+		~LogPanel() {}
+
+	protected:
+		std::unique_ptr<wxTextCtrl> logger;
+		std::unique_ptr<wxStreamToTextRedirector> redirect;
+
+};
+
+class SettingsPanel : public wxPanel
+{
+	public:
+		SettingsPanel(wxWindow* parent);
+
+		~SettingsPanel() {}
+
+	protected:
+		std::unique_ptr<wxButton> button;
+		std::unique_ptr<wxStaticText> description;
+};
+
+class ChartPanel : public wxPanel
+{
+	public:
+		ChartPanel(wxWindow* parent);
+
+		~ChartPanel() {}
+
+	protected:
+		std::unique_ptr<wxButton> button;
+		std::unique_ptr<wxStaticText> description;
+};
+
 
 
 class MainFrame: public wxFrame
@@ -20,10 +61,14 @@ class MainFrame: public wxFrame
 	private:
 		DevicesHandler devhandler;
 
-		wxTextCtrl* logger;
 
-		wxStreamToTextRedirector* redirect;
+		wxAuiManager layoutmanager;
+
+		std::unique_ptr<ChartPanel> chartpanel;
+		std::unique_ptr<LogPanel> logpanel;
+		std::unique_ptr<SettingsPanel> settingspanel;
 
 		void OnExit();
 		void OnAbout();
 };
+

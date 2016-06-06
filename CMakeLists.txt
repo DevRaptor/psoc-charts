@@ -86,7 +86,7 @@ SET(wxWidgets_USE_STATIC ON)
 SET(wxWidgets_WXCONFIG_OPTS "--static=yes")
 
 
-   FIND_PACKAGE(wxWidgets COMPONENTS base core gl net)
+   FIND_PACKAGE(wxWidgets COMPONENTS base core gl net aui)
    IF(wxWidgets_FOUND)
      INCLUDE(${wxWidgets_USE_FILE})
      # and for each of your dependant executable/library targets:

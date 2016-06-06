@@ -11,8 +11,54 @@
 #include "../Log.hpp"
 #include "MainFrame.hpp"
 
-std::ostream* target;
+std::ostream* target = &std::cout;
 
+LogPanel::LogPanel(wxWindow* parent)
+	: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(500, 300))
+{
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+
+	logger = std::make_unique<wxTextCtrl>(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY);
+	sizer->Add(logger.get(), 1, wxALL|wxEXPAND, 5);
+
+	SetSizer(sizer);
+	Layout();
+
+	redirect = std::make_unique<wxStreamToTextRedirector>(logger.get(), target);
+	Log("Redirect log to wxTextCtrl\n");
+
+
+}
+
+SettingsPanel::SettingsPanel(wxWindow* parent)
+	: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 500))
+{
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+
+	button = std::make_unique<wxButton>(this, wxID_ANY, "Button");
+	description = std::make_unique<wxStaticText>(this, wxID_ANY, "Description");
+
+	sizer->Add(description.get(), 1, wxALL|wxEXPAND, 5);
+	sizer->Add(button.get(), 1, wxALL|wxEXPAND, 5);
+
+	SetSizer(sizer);
+	Layout();
+}
+
+ChartPanel::ChartPanel(wxWindow* parent)
+	: wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 500))
+{
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+
+	button = std::make_unique<wxButton>(this, wxID_ANY, "Button");
+	description = std::make_unique<wxStaticText>(this, wxID_ANY, "Description");
+
+	sizer->Add(description.get(), 1, wxALL|wxEXPAND, 5);
+	sizer->Add(button.get(), 1, wxALL|wxEXPAND, 5);
+
+	SetSizer(sizer);
+	Layout();
+}
 
 MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size)
 	: wxFrame(NULL, wxID_ANY, title, pos, size)
@@ -49,23 +95,34 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
 	///////////////////////////////////////////
 
-	wxBoxSizer* sizer;
-	sizer = new wxBoxSizer(wxVERTICAL);
 
-	logger = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY);
-	sizer->Add(logger, 1, wxALL|wxEXPAND, 5);
-
-	SetSizer(sizer);
-	Layout();
+	layoutmanager.SetManagedWindow(this);
 
 
-	redirect = new wxStreamToTextRedirector(logger, target);
-	Log("Redirect log to wxTextCtrl\n");
+	chartpanel = std::make_unique<ChartPanel>(this);
+	layoutmanager.AddPane(chartpanel.get(), wxCENTER, "Chart viewport");
+
+
+	logpanel = std::make_unique<LogPanel>(this);
+	layoutmanager.AddPane(logpanel.get(), wxBOTTOM, "Log");
+
+
+	settingspanel = std::make_unique<SettingsPanel>(this);
+	layoutmanager.AddPane(settingspanel.get(), wxAuiPaneInfo().Caption("Settings").Left().Layer(1).CloseButton(false));
+
+
+	layoutmanager.Update();
 }
 
 MainFrame::~MainFrame()
 {
-	delete redirect;
+	/*
+	if sizer is a std::unique_ptr, then must detach sizer and don't auto delete him;
+		sizer will be destroyed by unique pointer
+	//SetSizer(NULL, false);
+	*/
+
+	layoutmanager.UnInit();
 }
 
 
