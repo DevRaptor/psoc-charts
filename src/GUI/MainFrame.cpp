@@ -70,6 +70,9 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 	wxMenuItem* item_devlist = new wxMenuItem(menu_file, wxID_ANY, "Print devices list\tCtrl-P");
 	menu_file->Append(item_devlist);
 
+	wxMenuItem* item_selectdev = new wxMenuItem(menu_file, wxID_ANY, "Select device\tCtrl-O");
+	menu_file->Append(item_selectdev);
+
 	wxMenuItem* item_exit = new wxMenuItem(menu_file, wxID_ANY, "Exit\tCtrl-Q");
 	menu_file->Append(item_exit);
 
@@ -90,6 +93,7 @@ MainFrame::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& si
 
 	menu_file->Bind(wxEVT_COMMAND_MENU_SELECTED, [&](auto) {this->devhandler.PrintDevicesList();},
 	item_devlist->GetId());
+	menu_file->Bind(wxEVT_COMMAND_MENU_SELECTED, [&](auto) {this->OnSelectDevice();}, item_selectdev->GetId());
 	menu_file->Bind(wxEVT_COMMAND_MENU_SELECTED, [&](auto) {this->OnExit();}, item_exit->GetId());
 	menu_help->Bind(wxEVT_COMMAND_MENU_SELECTED, [&](auto) {this->OnAbout();}, item_help->GetId());
 
@@ -137,3 +141,26 @@ void MainFrame::OnAbout()
 				 "About psoc-charts", wxOK | wxICON_INFORMATION);
 }
 
+void MainFrame::OnSelectDevice()
+{
+	std::vector<std::string> devices = devhandler.PrintDevicesList();
+
+	wxArrayString choices;
+	for(std::string& item : devices)
+	{
+		choices.Add(item);
+		//Log(item, "\n");
+	}
+
+	wxSingleChoiceDialog dialog(this, "Please select source data for chart",
+								"Please select a value", choices);
+
+	if (dialog.ShowModal() == wxID_OK)
+	{
+		//device to open
+		std::string selection = dialog.GetStringSelection().ToStdString();
+		devhandler.OpenDevice(std::stoi(selection.substr(0, 4)), std::stoi(selection.substr(5, 4)));
+
+		//wxMessageBox(dialog.GetStringSelection(), wxT("Got string"));
+	}
+}

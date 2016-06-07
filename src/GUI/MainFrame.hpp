@@ -10,6 +10,7 @@
 #include <memory>
 #include <wx/wx.h>
 #include <wx/aui/framemanager.h>
+#include <wx/choicdlg.h>
 
 #include "../Model/DevicesHandler.hpp"
 
@@ -70,5 +71,6 @@ class MainFrame: public wxFrame
 
 		void OnExit();
 		void OnAbout();
+		void OnSelectDevice();
 };
 

@@ -7,13 +7,26 @@
 
 #pragma once
 
+#include <vector>
+#include <string>
+#include "libusb.h"
+
+struct command_status_wrapper
+{
+	uint8_t dCSWSignature[4];
+	uint32_t dCSWTag;
+	uint32_t dCSWDataResidue;
+	uint8_t bCSWStatus;
+};
+
 class DevicesHandler
 {
 	public:
 		DevicesHandler();
 		~DevicesHandler();
 
-		void PrintDevicesList();
+		std::vector<std::string> PrintDevicesList();
+		void OpenDevice(int vid, int pid);
 
 	private:
 		void InitLibUSB();
