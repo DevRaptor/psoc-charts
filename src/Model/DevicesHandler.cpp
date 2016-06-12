@@ -134,28 +134,31 @@ void DevicesHandler::OpenDevice(int vid, int pid)
 
 	if(libusb_kernel_driver_active(handle, 0) == 1)   //find out if kernel driver is attached
 	{
-		Log("Kernel Driver Active");
+		Log("Kernel Driver Active\n");
 
 		if(libusb_detach_kernel_driver(handle, 0) == 0) //detach it
-			Log("Kernel Driver Detached!");
+			Log("Kernel Driver Detached!\n");
 	}
 
 	int r = libusb_claim_interface(handle, 0); //claim interface 0 (the first) of device (mine had jsut 1)
 
 	if(r < 0)
 	{
-		Log("Cannot Claim Interface");
+		Log("Cannot Claim Interface\n");
 		return;
 	}
-	Log("Claimed Interface");
+	Log("Claimed Interface\n");
 
 
-	unsigned char data[4];
+	unsigned char data[512];
 	int actual_length;
-	r = libusb_bulk_transfer(handle, LIBUSB_ENDPOINT_IN, data, sizeof(data), &actual_length, 0);
+	Log("transfer :", IntToHexString(LIBUSB_TRANSFER_TYPE_BULK | LIBUSB_ENDPOINT_IN), "\n");
+	Log("size: ", sizeof(data));
+	r = libusb_bulk_transfer(handle, 0x82, data, sizeof(data), &actual_length, 0);
 	if (r == 0 && actual_length == sizeof(data))
 	{
 		Log("Correct transfer!\n");
+		Log("Actual length: ", actual_length, "\n");
 		Log("Data: ", data[0], data[1], data[2], data[3]);
 		// results of the transaction can now be found in the data buffer
 		// parse them here and report button press

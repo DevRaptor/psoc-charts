@@ -159,8 +159,8 @@ void MainFrame::OnSelectDevice()
 	{
 		//device to open
 		std::string selection = dialog.GetStringSelection().ToStdString();
-		devhandler.OpenDevice(std::stoi(selection.substr(0, 4)), std::stoi(selection.substr(5, 4)));
-
+		devhandler.OpenDevice(std::stoi(selection.substr(0, 4), 0, 16),
+			std::stoi(selection.substr(5, 4), 0, 16));
 		//wxMessageBox(dialog.GetStringSelection(), wxT("Got string"));
 	}
 }
