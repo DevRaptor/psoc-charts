@@ -4,17 +4,20 @@
 
 FIND_PATH( LIBUSB_INCLUDE_DIR libusb.h
   ${LIBUSB_ROOT_DIR}/include
-  /usr/include
-  /usr/local/include
-  /opt/local/include
+  /usr/include/libusb-1.0
+  /usr/local/include/libusb-1.0
+  /opt/local/include/libusb-1.0
 )
 
-FIND_LIBRARY( LIBUSB_LIBRARY libusb-1.0
-  ${LIBUSB_ROOT_DIR}/lib
-  /usr/lib64
-  /usr/lib
-  /usr/local/lib
-  /opt/local/lib
+FIND_LIBRARY( LIBUSB_LIBRARY 
+  NAMES	
+    usb-1.0 usb libusb libusb-1.0 libusb-1.0-0-dev
+  PATHS  
+    ${LIBUSB_ROOT_DIR}/lib
+    /usr/lib64
+    /usr/lib
+    /usr/local/lib
+    /opt/local/lib
 )
 
 IF(LIBUSB_INCLUDE_DIR AND LIBUSB_LIBRARY)
@@ -28,6 +31,6 @@ IF(LIBUSB_FOUND)
    ENDIF(NOT LIBUSB_FIND_QUIETLY)
 ELSE(LIBUSB_FOUND)
    IF(LIBUSB_FIND_REQUIRED)
-      MESSAGE(FATAL_ERROR "Could not find LIBUSB")
+      MESSAGE(FATAL_ERROR "Could not find LIBUSB!")
    ENDIF(LIBUSB_FIND_REQUIRED)
 ENDIF(LIBUSB_FOUND)
