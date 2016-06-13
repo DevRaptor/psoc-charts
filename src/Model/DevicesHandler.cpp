@@ -26,8 +26,7 @@ void DevicesHandler::InitLibUSB()
 
 void DevicesHandler::CloseLibUSB()
 {
-libusb_exit(context);
-	libusb_exit(NULL);
+	libusb_exit(context);
 }
 
 DevicesHandler::DevicesHandler()
@@ -125,14 +124,14 @@ std::vector<std::string> DevicesHandler::PrintDevicesList()
 			{
 				const libusb_interface_descriptor* interdesc = &inter->altsetting[j];
 
-	            Log("interface number: ", (int)interdesc->bInterfaceNumber, " | ");
-	            Log("Number of endpoints: ", (int)interdesc->bNumEndpoints, " | ");
+				Log("interface number: ", (int)interdesc->bInterfaceNumber, " | ");
+				Log("Number of endpoints: ", (int)interdesc->bNumEndpoints, " | ");
 
-	            for(int k = 0; k < interdesc->bNumEndpoints; k++)
-	            {
-	                const libusb_endpoint_descriptor* epdesc = &interdesc->endpoint[k];
-	                Log("Descriptor Type: ", (int)epdesc->bDescriptorType, " | ");
-	                Log("EP Address: ", (int)epdesc->bEndpointAddress, " | ");
+				for(int k = 0; k < interdesc->bNumEndpoints; k++)
+				{
+					const libusb_endpoint_descriptor* epdesc = &interdesc->endpoint[k];
+					Log("Descriptor Type: ", (int)epdesc->bDescriptorType, " | ");
+					Log("EP Address: ", (int)epdesc->bEndpointAddress, " | ");
 				}
 				Log("\n");
 			}
@@ -199,4 +198,6 @@ void DevicesHandler::OpenDevice(int vid, int pid)
 		Log("Error!\n");
 		return;
 	}
+
+	libusb_close(handle);
 }
