@@ -16,7 +16,9 @@
 
 void DevicesHandler::InitLibUSB()
 {
-	int libcode = libusb_init(NULL);
+	int libcode = libusb_init(&context);
+
+	libusb_set_debug(context, 3);
 
 	if(libcode < 0)
 		return;
@@ -24,6 +26,7 @@ void DevicesHandler::InitLibUSB()
 
 void DevicesHandler::CloseLibUSB()
 {
+libusb_exit(context);
 	libusb_exit(NULL);
 }
 
@@ -45,7 +48,7 @@ std::vector<std::string> DevicesHandler::PrintDevicesList()
 	std::vector<std::string> devicelist;
 	libusb_device** devices;
 
-	int errorcode = libusb_get_device_list(NULL, &devices);
+	int errorcode = libusb_get_device_list(context, &devices);
 	if (errorcode < 0)
 		return devicelist;
 
@@ -87,7 +90,7 @@ std::vector<std::string> DevicesHandler::PrintDevicesList()
 		string_index[1] = desc.iProduct;
 		string_index[2] = desc.iSerialNumber;
 
-		libusb_device_handle* handle = libusb_open_device_with_vid_pid(NULL, desc.idVendor, desc.idProduct);
+		libusb_device_handle* handle = libusb_open_device_with_vid_pid(context, desc.idVendor, desc.idProduct);
 
 		if(handle == NULL)
 		{
@@ -110,6 +113,34 @@ std::vector<std::string> DevicesHandler::PrintDevicesList()
 		}
 
 		Log("\n");
+
+		//interfaces
+		libusb_config_descriptor* config;
+		libusb_get_config_descriptor(dev, 0, &config);
+
+		for(int i = 0; i < config->bNumInterfaces; i++)
+		{
+			const libusb_interface* inter = &config->interface[i];
+			for(int j = 0; j < inter->num_altsetting; j++)
+			{
+				const libusb_interface_descriptor* interdesc = &inter->altsetting[j];
+
+	            Log("interface number: ", (int)interdesc->bInterfaceNumber, " | ");
+	            Log("Number of endpoints: ", (int)interdesc->bNumEndpoints, " | ");
+
+	            for(int k = 0; k < interdesc->bNumEndpoints; k++)
+	            {
+	                const libusb_endpoint_descriptor* epdesc = &interdesc->endpoint[k];
+	                Log("Descriptor Type: ", (int)epdesc->bDescriptorType, " | ");
+	                Log("EP Address: ", (int)epdesc->bEndpointAddress, " | ");
+				}
+				Log("\n");
+			}
+			Log("\n");
+		}
+
+		Log("_________________________________________________________\n");
+
 		devicelist.push_back(description);
 
 		libusb_close(handle);
@@ -122,8 +153,7 @@ std::vector<std::string> DevicesHandler::PrintDevicesList()
 
 void DevicesHandler::OpenDevice(int vid, int pid)
 {
-
-	libusb_device_handle* handle = libusb_open_device_with_vid_pid(NULL, vid, pid);
+	libusb_device_handle* handle = libusb_open_device_with_vid_pid(context, vid, pid);
 	if(handle == NULL)
 	{
 		Log("Cannot open device!\n");
@@ -150,18 +180,19 @@ void DevicesHandler::OpenDevice(int vid, int pid)
 	Log("Claimed Interface\n");
 
 
-	unsigned char data[512];
+	//unsigned char data[512];
+	unsigned char data[5] = "Test";
 	int actual_length;
-	Log("transfer :", IntToHexString(LIBUSB_TRANSFER_TYPE_BULK | LIBUSB_ENDPOINT_IN), "\n");
+	Log("transfer :", 1|LIBUSB_ENDPOINT_IN, "\n");
 	Log("size: ", sizeof(data));
-	r = libusb_bulk_transfer(handle, 0x82, data, sizeof(data), &actual_length, 0);
+	r = libusb_bulk_transfer(handle, (1|LIBUSB_ENDPOINT_IN), data, sizeof(data), &actual_length, 3000);
+	//r = libusb_bulk_transfer(handle, (2|LIBUSB_ENDPOINT_OUT), data, sizeof(data), &actual_length, 3000);
+	Log("Transfer status: ", r, "\n");
 	if (r == 0 && actual_length == sizeof(data))
 	{
 		Log("Correct transfer!\n");
 		Log("Actual length: ", actual_length, "\n");
-		Log("Data: ", data[0], data[1], data[2], data[3]);
-		// results of the transaction can now be found in the data buffer
-		// parse them here and report button press
+		Log("Data: ", data[0], data[1], data[2], data[3], data[4]);
 	}
 	else
 	{

@@ -29,6 +29,8 @@ class DevicesHandler
 		void OpenDevice(int vid, int pid);
 
 	private:
+		libusb_context* context;
+
 		void InitLibUSB();
 		void CloseLibUSB();
 };
