@@ -7,7 +7,7 @@ psoc-charts is a GUI application to drawing charts from PSoC 3 via USB.
 
 - Windows
 - Linux
-- Mac OS X
+- Mac OS X (not tested yet)
 
 ## Requirements
   - CMake 3.0+
@@ -20,9 +20,12 @@ psoc-charts is a GUI application to drawing charts from PSoC 3 via USB.
 #### Dependencies
 
 - [libusb 1.0.20](https://github.com/libusb/libusb)
-- [wxWidgets 3.1](https://www.wxwidgets.org/downloads/)
+- [wxWidgets 3.0.2](https://www.wxwidgets.org/downloads/)
 
 
 ## Building project 
 
 Use CMake to generate your preferred makefile / project file for IDE, and use him to build entire project.
+
+Example CMake instruction:
+cmake CMakeLists.txt -G 'CodeBlocks - Unix Makefiles'
